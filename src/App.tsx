@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { Game2048 } from './pages/Layout';
 
+// 리팩토링하자..
 function App() {
   const initialGrid: number[][] = [
     [0, 0, 0, 0],
