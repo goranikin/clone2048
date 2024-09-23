@@ -28,11 +28,14 @@ function App() {
   };
 
   // if any cell would be winningCondition, player win!
-  const checkWinningCondition = useCallback((parameterGrid: number[][]): boolean => {
-    return parameterGrid.some((row) => row.some((cell) => cell === winningCondition));
-  }, [winningCondition]);
-
-
+  const checkWinningCondition = useCallback(
+    (parameterGrid: number[][]): boolean => {
+      return parameterGrid.some((row) =>
+        row.some((cell) => cell === winningCondition),
+      );
+    },
+    [winningCondition],
+  );
 
   useEffect(() => {
     if (score > bestScore) {
@@ -51,7 +54,9 @@ function App() {
   }, []);
 
   const checkGameOver = useCallback((parameterGrid: number[][]): boolean => {
-    const hasEmptyCell = parameterGrid.some((line) => line.some((cell) => cell === 0));
+    const hasEmptyCell = parameterGrid.some((line) =>
+      line.some((cell) => cell === 0),
+    );
     if (hasEmptyCell) return false;
 
     const hasMergeableCells = parameterGrid.some((line, i) =>
@@ -62,68 +67,81 @@ function App() {
           (rightCell !== undefined && cell === rightCell) ||
           (bottomCell !== undefined && cell === bottomCell)
         );
-      })
+      }),
     );
     return !hasMergeableCells;
   }, []);
 
-  const addNewNumber = useCallback((parameterGrid: number[][]): number[][] => {
-    const newGrid = parameterGrid.map((row) => [...row]);
+  const addNewNumber = useCallback(
+    (parameterGrid: number[][]): number[][] => {
+      const newGrid = parameterGrid.map((row) => [...row]);
 
-    const randomZeroPosition = newGrid
-      .flatMap((row, i) =>
-        row.flatMap((cell, j) => (cell !== 0 ? [] : [{ i, j }])),
-      )
-      .sort(() => Math.random() - 0.5)[0];
+      const randomZeroPosition = newGrid
+        .flatMap((row, i) =>
+          row.flatMap((cell, j) => (cell !== 0 ? [] : [{ i, j }])),
+        )
+        .sort(() => Math.random() - 0.5)[0];
 
-    if (randomZeroPosition === undefined) {
-      return checkGameOver(newGrid) ? gameOver() : newGrid;
-    }
+      if (randomZeroPosition === undefined) {
+        return checkGameOver(newGrid) ? gameOver() : newGrid;
+      }
 
-    return newGrid.map((row, i) => {
-      return row.map((cell, j) => {
-        return i === randomZeroPosition.i && j === randomZeroPosition.j
-          ? Math.random() > 0.2
-            ? 2
-            : 4
-          : cell;
+      return newGrid.map((row, i) => {
+        return row.map((cell, j) => {
+          return i === randomZeroPosition.i && j === randomZeroPosition.j
+            ? Math.random() > 0.2
+              ? 2
+              : 4
+            : cell;
+        });
       });
-    });
-
-  }, [checkGameOver, gameOver]);
+    },
+    [checkGameOver, gameOver],
+  );
 
   // 초기 설정
   const [grid, setGrid] = useState<number[][]>(
     addNewNumber(addNewNumber(initialGrid)),
   );
 
-
   const updateScore = useCallback((newGrid: number[][]) => {
     const newScore = newGrid.reduce(
       (acc, row) => acc + row.reduce((sum, cell) => sum + cell, 0),
-      0
+      0,
     );
     setScore(newScore);
   }, []);
 
-  const move = useCallback((moveFunction: (line: number[]) => number[]) => {
-    let changed = false;
-    const newGrid = grid.map((line) => {
-      const newLine = moveFunction(line);
-      if (newLine.join(',') !== line.join(',')) changed = true;
-      return newLine;
-    });
-    if (changed as boolean) {
-      const gridWithNewNumber = addNewNumber(newGrid);
-      setGrid(gridWithNewNumber);
-      updateScore(gridWithNewNumber);
-      if (checkWinningCondition(gridWithNewNumber)) {
-        setIsWinner(true);
-      } else if (checkGameOver(gridWithNewNumber)) {
-        gameOver();
+  const move = useCallback(
+    (moveFunction: (line: number[]) => number[]) => {
+      let changed = false;
+      const newGrid = grid.map((line) => {
+        const newLine = moveFunction(line);
+        if (newLine.join(',') !== line.join(',')) changed = true;
+        return newLine;
+      });
+      if (changed as boolean) {
+        const gridWithNewNumber = addNewNumber(newGrid);
+        setGrid(gridWithNewNumber);
+        updateScore(gridWithNewNumber);
+        if (checkWinningCondition(gridWithNewNumber)) {
+          setIsWinner(true);
+        } else if (checkGameOver(gridWithNewNumber)) {
+          gameOver();
+        }
       }
-    }
-  }, [grid, addNewNumber, updateScore, checkWinningCondition, checkGameOver, gameOver, setGrid, setIsWinner]);
+    },
+    [
+      grid,
+      addNewNumber,
+      updateScore,
+      checkWinningCondition,
+      checkGameOver,
+      gameOver,
+      setGrid,
+      setIsWinner,
+    ],
+  );
 
   const moveLeftLogic = useCallback((line: number[]): number[] => {
     let newLine = line.filter((num) => num !== 0);
@@ -153,7 +171,7 @@ function App() {
 
   const transpose = useCallback((parameterGrid: number[][]): number[][] => {
     return (parameterGrid[0] as number[]).map((_, colIndex) =>
-      parameterGrid.map((row) => row[colIndex])
+      parameterGrid.map((row) => row[colIndex]),
     ) as number[][];
   }, []);
 
@@ -171,12 +189,23 @@ function App() {
         gameOver();
       }
     }
-  }, [grid, transpose, moveLeftLogic, addNewNumber, updateScore, checkWinningCondition, checkGameOver, setGrid, setIsWinner, gameOver]);
+  }, [
+    grid,
+    transpose,
+    moveLeftLogic,
+    addNewNumber,
+    updateScore,
+    checkWinningCondition,
+    checkGameOver,
+    setGrid,
+    setIsWinner,
+    gameOver,
+  ]);
 
   const moveDown = useCallback(() => {
     const transposed = transpose(grid);
     const movedGrid = transposed.map((row) =>
-      moveLeftLogic([...row].reverse()).reverse()
+      moveLeftLogic([...row].reverse()).reverse(),
     );
     const newGrid = transpose(movedGrid);
     if (JSON.stringify(newGrid) !== JSON.stringify(grid)) {
@@ -189,7 +218,18 @@ function App() {
         gameOver();
       }
     }
-  }, [grid, transpose, moveLeftLogic, addNewNumber, updateScore, checkWinningCondition, checkGameOver, setGrid, setIsWinner, gameOver]);
+  }, [
+    grid,
+    transpose,
+    moveLeftLogic,
+    addNewNumber,
+    updateScore,
+    checkWinningCondition,
+    checkGameOver,
+    setGrid,
+    setIsWinner,
+    gameOver,
+  ]);
 
   useEffect(() => {
     const handleKeyUp = (event: KeyboardEvent) => {
