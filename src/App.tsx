@@ -267,6 +267,8 @@ function App() {
     setDoPlayerChooseWinningCondition(true);
   };
 
+  const availableWinningConditions = [128, 256, 512, 1024, 2048];
+
   return (
     <div className="App">
       <h1>2048</h1>
@@ -279,41 +281,16 @@ function App() {
       {doPlayerChooseWinningCondition && (
         <div className="choose-condition">
           <p>목표 점수를 설정하세요.</p>
-          <button
-            onClick={() => {
-              chooseWinningCondition(128);
-            }}
-          >
-            128
-          </button>
-          <button
-            onClick={() => {
-              chooseWinningCondition(256);
-            }}
-          >
-            256
-          </button>
-          <button
-            onClick={() => {
-              chooseWinningCondition(512);
-            }}
-          >
-            512
-          </button>
-          <button
-            onClick={() => {
-              chooseWinningCondition(1024);
-            }}
-          >
-            1028
-          </button>
-          <button
-            onClick={() => {
-              chooseWinningCondition(2048);
-            }}
-          >
-            2048
-          </button>
+          {availableWinningConditions.map((condition) => (
+            <button
+              key={condition}
+              onClick={() => {
+                chooseWinningCondition(condition);
+              }}
+            >
+              {condition}
+            </button>
+          ))}
           <button
             onClick={() => {
               chooseWinningCondition(-1);
