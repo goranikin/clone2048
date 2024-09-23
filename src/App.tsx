@@ -4,6 +4,8 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { Game2048 } from './pages/Layout';
 
+const storageBestScoreKey = 'bestScore';
+
 // 리팩토링하자..
 function App() {
   const initialGrid: number[][] = [
@@ -15,7 +17,7 @@ function App() {
 
   const [score, setScore] = useState<number>(0);
   const [bestScore, setBestScore] = useState(
-    parseInt(localStorage.getItem('bestScore') ?? '0'),
+    parseInt(localStorage.getItem(storageBestScoreKey) ?? '0'),
   );
   const [isGameOver, setIsGameOver] = useState<boolean>(false);
   const [isWinner, setIsWinner] = useState<boolean>(false);
@@ -41,7 +43,7 @@ function App() {
   useEffect(() => {
     if (score > bestScore) {
       setBestScore(score);
-      localStorage.setItem('bestScore', score.toString());
+      localStorage.setItem(storageBestScoreKey, score.toString());
     }
   }, [score, bestScore]);
 
