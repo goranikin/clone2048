@@ -1,5 +1,8 @@
 import React from 'react';
 
+import { clsx } from '../utils/clsx';
+import styles from './Layout.module.css';
+
 interface Game2048Props {
   grid: number[][];
   setGrid: React.Dispatch<React.SetStateAction<number[][]>>;
@@ -7,9 +10,9 @@ interface Game2048Props {
 
 export function Game2048({ grid }: Game2048Props) {
   return (
-    <div className="game-board">
+    <div className={styles['game-board']}>
       {grid.map((row, i) => (
-        <div key={i} className="row">
+        <div key={i} className={styles.row}>
           {row.map((cell, j) => (
             <Cell key={j} value={cell} />
           ))}
@@ -24,5 +27,9 @@ interface CellProps {
 }
 
 function Cell({ value }: CellProps) {
-  return <div className={`cell cell-${value}`}>{value > 0 ? value : ''}</div>;
+  return (
+    <div className={clsx(styles.cell, styles[`cell-${value}`])}>
+      {value > 0 ? value : ''}
+    </div>
+  );
 }
