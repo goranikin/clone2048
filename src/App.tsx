@@ -1,11 +1,12 @@
 import './App.css';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Game2048 } from './pages/Layout';
 import { implAddNewCell } from './utils/implAddNewCell.ts';
-import { implMoveFunctions } from './utils/implMoveLogic.ts';
 import { implCheckGameOver } from './utils/implCheckGameOver.ts';
+import { implCheckWinningCondition } from './utils/implCheckWinningCondtion.ts';
+import { implMoveFunctions } from './utils/implMoveLogic.ts';
 
 const storageBestScoreKey = 'bestScore';
 
@@ -31,12 +32,6 @@ function App() {
     setWinningCondition(condition);
     setDoPlayerChooseWinningCondition(false);
   };
-
-  const checkWinningCondition = (parameterGrid: number[][]): boolean => {
-      return parameterGrid.some((row) =>
-        row.some((cell) => cell === winningCondition),
-      );
-    }
 
   useEffect(() => {
     if (score > bestScore) {
@@ -83,11 +78,16 @@ function App() {
     };
   }, [grid, isGameOver, isWinner]);
 
+
   useEffect(() => {
     const { checkGameOver } = implCheckGameOver;
+    const { checkWinningCondition } = implCheckWinningCondition;
+
 
     if (checkGameOver(grid)) setIsGameOver(true);
-  }, [grid]);
+    if (checkWinningCondition(grid, winningCondition)) setIsWinner(true);
+
+  }, [grid, winningCondition]);
 
   const restartGame = () => {
     setGrid(implAddNewCell.addNewCell(implAddNewCell.addNewCell(initialGrid)));
