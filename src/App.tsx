@@ -3,10 +3,10 @@ import './App.css';
 import { useCallback, useEffect, useState } from 'react';
 
 import { Game2048 } from './pages/Layout';
+import { implMoveFunctions } from './utils/moveLogic.ts';
 
 const storageBestScoreKey = 'bestScore';
 
-// 리팩토링하자..
 function App() {
   const initialGrid: number[][] = [
     [0, 0, 0, 0],
@@ -30,7 +30,6 @@ function App() {
     setDoPlayerChooseWinningCondition(false);
   };
 
-  // if any cell would be winningCondition, player win!
   const checkWinningCondition = useCallback(
     (parameterGrid: number[][]): boolean => {
       return parameterGrid.some((row) =>
@@ -107,148 +106,26 @@ function App() {
     addNewNumber(addNewNumber(initialGrid)),
   );
 
-  const updateScore = useCallback((newGrid: number[][]) => {
-    const newScore = newGrid.reduce(
-      (acc, row) => acc + row.reduce((sum, cell) => sum + cell, 0),
-      0,
-    );
-    setScore(newScore);
-  }, []);
 
-  const move = useCallback(
-    (moveFunction: (line: number[]) => number[]) => {
-      let changed = false;
-      const newGrid = grid.map((line) => {
-        const newLine = moveFunction(line);
-        if (newLine.join(',') !== line.join(',')) changed = true;
-        return newLine;
-      });
-      if (changed as boolean) {
-        const gridWithNewNumber = addNewNumber(newGrid);
-        setGrid(gridWithNewNumber);
-        updateScore(gridWithNewNumber);
-        if (checkWinningCondition(gridWithNewNumber)) {
-          setIsWinner(true);
-        } else if (checkGameOver(gridWithNewNumber)) {
-          gameOver();
-        }
-      }
-    },
-    [
-      grid,
-      addNewNumber,
-      updateScore,
-      checkWinningCondition,
-      checkGameOver,
-      gameOver,
-      setGrid,
-      setIsWinner,
-    ],
-  );
-
-  const moveLeftLogic = useCallback((line: number[]): number[] => {
-    let newLine = line.filter((num) => num !== 0);
-    for (let i = 0; i < newLine.length - 1; i++) {
-      if (newLine[i] === newLine[i + 1]) {
-        (newLine[i] as number) *= 2;
-        newLine[i + 1] = 0;
-        i++;
-      }
-    }
-    newLine = newLine.filter((num) => num !== 0);
-    while (newLine.length < 4) newLine.push(0);
-    return newLine;
-  }, []);
-
-  const moveLeft = useCallback(() => {
-    move(moveLeftLogic);
-  }, [move, moveLeftLogic]);
-
-  const moveRight = useCallback(() => {
-    move((line) => {
-      const reversedLine = [...line].reverse();
-      const movedLine = moveLeftLogic(reversedLine);
-      return movedLine.reverse();
-    });
-  }, [move, moveLeftLogic]);
-
-  const transpose = useCallback((parameterGrid: number[][]): number[][] => {
-    return (parameterGrid[0] as number[]).map((_, colIndex) =>
-      parameterGrid.map((row) => row[colIndex]),
-    ) as number[][];
-  }, []);
-
-  const moveUp = useCallback(() => {
-    const transposed = transpose(grid);
-    const movedGrid = transposed.map(moveLeftLogic);
-    const newGrid = transpose(movedGrid);
-    if (JSON.stringify(newGrid) !== JSON.stringify(grid)) {
-      const gridWithNewNumber = addNewNumber(newGrid);
-      setGrid(gridWithNewNumber);
-      updateScore(gridWithNewNumber);
-      if (checkWinningCondition(gridWithNewNumber)) {
-        setIsWinner(true);
-      } else if (checkGameOver(gridWithNewNumber)) {
-        gameOver();
-      }
-    }
-  }, [
-    grid,
-    transpose,
-    moveLeftLogic,
-    addNewNumber,
-    updateScore,
-    checkWinningCondition,
-    checkGameOver,
-    setGrid,
-    setIsWinner,
-    gameOver,
-  ]);
-
-  const moveDown = useCallback(() => {
-    const transposed = transpose(grid);
-    const movedGrid = transposed.map((row) =>
-      moveLeftLogic([...row].reverse()).reverse(),
-    );
-    const newGrid = transpose(movedGrid);
-    if (JSON.stringify(newGrid) !== JSON.stringify(grid)) {
-      const gridWithNewNumber = addNewNumber(newGrid);
-      setGrid(gridWithNewNumber);
-      updateScore(gridWithNewNumber);
-      if (checkWinningCondition(gridWithNewNumber)) {
-        setIsWinner(true);
-      } else if (checkGameOver(gridWithNewNumber)) {
-        gameOver();
-      }
-    }
-  }, [
-    grid,
-    transpose,
-    moveLeftLogic,
-    addNewNumber,
-    updateScore,
-    checkWinningCondition,
-    checkGameOver,
-    setGrid,
-    setIsWinner,
-    gameOver,
-  ]);
 
   useEffect(() => {
+
     const handleKeyUp = (event: KeyboardEvent) => {
+      const { moveLeft, moveRight, moveUp, moveDown } = implMoveFunctions;
+
       if (!isGameOver && !isWinner) {
         switch (event.key) {
           case 'ArrowUp':
-            moveUp();
+            moveUp(grid);
             break;
           case 'ArrowDown':
-            moveDown();
+            moveDown(grid);
             break;
           case 'ArrowLeft':
-            moveLeft();
+            moveLeft(grid);
             break;
           case 'ArrowRight':
-            moveRight();
+            moveRight(grid);
             break;
         }
       }
@@ -259,7 +136,7 @@ function App() {
     return () => {
       window.removeEventListener('keyup', handleKeyUp);
     };
-  }, [isGameOver, isWinner, moveDown, moveLeft, moveRight, moveUp]);
+  }, [grid, isGameOver, isWinner]);
 
   const restartGame = () => {
     setGrid(addNewNumber(addNewNumber(initialGrid)));
