@@ -3,7 +3,7 @@ import './App.css';
 import { useCallback, useEffect, useState } from 'react';
 
 import { Game2048 } from './pages/Layout';
-import { implMoveFunctions } from './utils/moveLogic.ts';
+import { implMoveFunctions } from './utils/implMoveLogic.ts';
 
 const storageBestScoreKey = 'bestScore';
 
@@ -46,8 +46,6 @@ function App() {
     }
   }, [score, bestScore]);
 
-  // if player lose the game, gameOver function would be executed and return grid which is filled -1.
-  // why return -1 grid? -> addNewNumber function's return type is number[][].
   const gameOver = useCallback((): number[][] => {
     setIsGameOver(true);
     return Array(4)
@@ -116,16 +114,16 @@ function App() {
       if (!isGameOver && !isWinner) {
         switch (event.key) {
           case 'ArrowUp':
-            moveUp(grid);
+            setGrid(moveUp(grid));
             break;
           case 'ArrowDown':
-            moveDown(grid);
+            setGrid(moveDown(grid));
             break;
           case 'ArrowLeft':
-            moveLeft(grid);
+            setGrid(moveLeft(grid));
             break;
           case 'ArrowRight':
-            moveRight(grid);
+            setGrid(moveRight(grid));
             break;
         }
       }
