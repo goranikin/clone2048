@@ -3,7 +3,9 @@ import './App.css';
 import { useCallback, useEffect, useState } from 'react';
 
 import { Game2048 } from './pages/Layout';
+import { implAddNewCell } from './utils/implAddNewCell.ts';
 import { implMoveFunctions } from './utils/implMoveLogic.ts';
+import { implCheckGameOver } from './utils/implCheckGameOver.ts';
 
 const storageBestScoreKey = 'bestScore';
 
@@ -30,14 +32,11 @@ function App() {
     setDoPlayerChooseWinningCondition(false);
   };
 
-  const checkWinningCondition = useCallback(
-    (parameterGrid: number[][]): boolean => {
+  const checkWinningCondition = (parameterGrid: number[][]): boolean => {
       return parameterGrid.some((row) =>
         row.some((cell) => cell === winningCondition),
       );
-    },
-    [winningCondition],
-  );
+    }
 
   useEffect(() => {
     if (score > bestScore) {
@@ -46,98 +45,52 @@ function App() {
     }
   }, [score, bestScore]);
 
-  const gameOver = useCallback((): number[][] => {
-    setIsGameOver(true);
-    return Array(4)
-      .fill(null)
-      .map(() => Array(4).fill(-1) as number[]);
-  }, []);
-
-  const checkGameOver = useCallback((parameterGrid: number[][]): boolean => {
-    const hasEmptyCell = parameterGrid.some((line) =>
-      line.some((cell) => cell === 0),
-    );
-    if (hasEmptyCell) return false;
-
-    const hasMergeableCells = parameterGrid.some((line, i) =>
-      line.some((cell, j) => {
-        const rightCell = line[j + 1];
-        const bottomCell = parameterGrid[i + 1]?.[j];
-        return (
-          (rightCell !== undefined && cell === rightCell) ||
-          (bottomCell !== undefined && cell === bottomCell)
-        );
-      }),
-    );
-    return !hasMergeableCells;
-  }, []);
-
-  const addNewNumber = useCallback(
-    (parameterGrid: number[][]): number[][] => {
-      const newGrid = parameterGrid.map((row) => [...row]);
-
-      const randomZeroPosition = newGrid
-        .flatMap((row, i) =>
-          row.flatMap((cell, j) => (cell !== 0 ? [] : [{ i, j }])),
-        )
-        .sort(() => Math.random() - 0.5)[0];
-
-      if (randomZeroPosition === undefined) {
-        return checkGameOver(newGrid) ? gameOver() : newGrid;
-      }
-
-      return newGrid.map((row, i) => {
-        return row.map((cell, j) => {
-          return i === randomZeroPosition.i && j === randomZeroPosition.j
-            ? Math.random() > 0.2
-              ? 2
-              : 4
-            : cell;
-        });
-      });
-    },
-    [checkGameOver, gameOver],
-  );
-
-  // 초기 설정
   const [grid, setGrid] = useState<number[][]>(
-    addNewNumber(addNewNumber(initialGrid)),
+    implAddNewCell.addNewCell(implAddNewCell.addNewCell(initialGrid))
   );
-
-
 
   useEffect(() => {
-
     const handleKeyUp = (event: KeyboardEvent) => {
       const { moveLeft, moveRight, moveUp, moveDown } = implMoveFunctions;
+      const { addNewCell } = implAddNewCell;
 
       if (!isGameOver && !isWinner) {
+        let movedGrid;
         switch (event.key) {
           case 'ArrowUp':
-            setGrid(moveUp(grid));
+            movedGrid = moveUp(grid);
             break;
           case 'ArrowDown':
-            setGrid(moveDown(grid));
+            movedGrid = moveDown(grid);
             break;
           case 'ArrowLeft':
-            setGrid(moveLeft(grid));
+            movedGrid = moveLeft(grid);
             break;
           case 'ArrowRight':
-            setGrid(moveRight(grid));
+            movedGrid = moveRight(grid);
             break;
+        }
+
+        if (movedGrid !== undefined) {
+          setGrid(addNewCell(movedGrid))
         }
       }
     };
 
     window.addEventListener('keyup', handleKeyUp);
-
     return () => {
       window.removeEventListener('keyup', handleKeyUp);
     };
   }, [grid, isGameOver, isWinner]);
 
+  useEffect(() => {
+    const { checkGameOver } = implCheckGameOver;
+
+    if (checkGameOver(grid)) setIsGameOver(true);
+  }, [grid]);
+
   const restartGame = () => {
-    setGrid(addNewNumber(addNewNumber(initialGrid)));
+    setGrid(implAddNewCell.addNewCell(implAddNewCell.addNewCell(initialGrid)));
     setScore(0);
     setIsGameOver(false);
     setIsWinner(false);
