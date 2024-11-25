@@ -4,7 +4,10 @@ import { useEffect, useState } from 'react';
 
 import { addNewCell } from './entities/addNewCell.ts';
 import { checkGameCondition } from './entities/checkGameCondition.ts';
-import { moveFunctions, type moveResultType } from './entities/moveFunctions.ts';
+import {
+  moveFunctions,
+  type moveResultType,
+} from './entities/moveFunctions.ts';
 import { Game2048 } from './pages/Layout';
 
 const storageBestScoreKey = 'bestScore';
@@ -41,7 +44,7 @@ function App() {
   }, [score, bestScore]);
 
   const [grid, setGrid] = useState<number[][]>(
-    addNewCell(addNewCell(initialGrid))
+    addNewCell(addNewCell(initialGrid)),
   );
 
   // 사용자 키 조작 체크
@@ -68,7 +71,10 @@ function App() {
             break;
         }
 
-        if (moveResult !== undefined && JSON.stringify(moveResult.resultGrid) !== JSON.stringify(grid)) {
+        if (
+          moveResult !== undefined &&
+          JSON.stringify(moveResult.resultGrid) !== JSON.stringify(grid)
+        ) {
           setGrid(addNewCell(moveResult.resultGrid));
           setScore((prevScore) => prevScore + moveResult.scoreIncrement);
         }
@@ -80,7 +86,6 @@ function App() {
       window.removeEventListener('keyup', handleKeyUp);
     };
   }, [doPlayerChooseWinningCondition, grid, isGameOver, isWinner]);
-
 
   // 게임 종료 조건 체크
   useEffect(() => {
