@@ -1,6 +1,12 @@
 type gridType = number[][]
 
-export const implCheckGameOver = {
+export const implCheckGameDone = {
+  checkWinningCondition: (grid: gridType, winningCondition: number): boolean => {
+    return grid.some((row) =>
+      row.some((cell) => cell === winningCondition),
+    );
+  },
+
   checkGameOver: (grid: gridType): boolean => {
     if (grid.some((line) => line.some((cell) => cell === 0))) {
       return false;

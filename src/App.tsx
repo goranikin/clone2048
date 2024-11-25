@@ -2,11 +2,10 @@ import './App.css';
 
 import { useEffect, useState } from 'react';
 
+import { implAddNewCell } from './infrastructures/implAddNewCell.ts';
+import { implCheckGameDone } from './infrastructures/implCheckGameDone.ts';
+import { implMoveFunctions } from './infrastructures/implMoveLogic.ts';
 import { Game2048 } from './pages/Layout';
-import { implAddNewCell } from './utils/implAddNewCell.ts';
-import { implCheckGameOver } from './utils/implCheckGameOver.ts';
-import { implCheckWinningCondition } from './utils/implCheckWinningCondtion.ts';
-import { implMoveFunctions } from './utils/implMoveLogic.ts';
 
 const storageBestScoreKey = 'bestScore';
 
@@ -80,9 +79,7 @@ function App() {
 
 
   useEffect(() => {
-    const { checkGameOver } = implCheckGameOver;
-    const { checkWinningCondition } = implCheckWinningCondition;
-
+    const { checkWinningCondition, checkGameOver } = implCheckGameDone;
 
     if (checkGameOver(grid)) setIsGameOver(true);
     if (checkWinningCondition(grid, winningCondition)) setIsWinner(true);
