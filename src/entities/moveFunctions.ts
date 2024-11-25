@@ -34,10 +34,10 @@ const moveGridLeftLogic = (grid: gridType): moveResultType => {
   };
 };
 
-const transpose = (parameterGrid: number[][]): number[][] => {
-  return (parameterGrid[0] as number[]).map((_, colIndex) =>
-    parameterGrid.map((row) => row[colIndex]),
-  ) as number[][];
+const transpose = (grid: gridType): gridType => {
+  return grid.map((_, colIndex) =>
+    grid.map((row) => row[colIndex]),
+  ) as gridType;
 };
 
 export const moveFunctions = {
