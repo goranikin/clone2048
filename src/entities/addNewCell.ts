@@ -1,7 +1,6 @@
 type gridType = number[][]
 
-export const implAddNewCell = {
-  addNewCell: (grid: gridType): gridType => {
+export const addNewCell = (grid: gridType): gridType => {
     const newGrid = grid.map((row) => [...row]);
 
     const randomZeroPosition = newGrid
@@ -19,5 +18,4 @@ export const implAddNewCell = {
           : cell;
       });
     });
-  },
-};
+  }

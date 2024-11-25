@@ -1,6 +1,6 @@
 type gridType = number[][]
 
-export const implCheckGameDone = {
+export const checkGameCondition = {
   checkWinningCondition: (grid: gridType, winningCondition: number): boolean => {
     return grid.some((row) =>
       row.some((cell) => cell === winningCondition),

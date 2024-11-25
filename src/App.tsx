@@ -2,9 +2,9 @@ import './App.css';
 
 import { useEffect, useState } from 'react';
 
-import { implAddNewCell } from './infrastructures/implAddNewCell.ts';
-import { implCheckGameDone } from './infrastructures/implCheckGameDone.ts';
-import { implMoveFunctions } from './infrastructures/implMoveLogic.ts';
+import { addNewCell } from './entities/addNewCell.ts';
+import { checkGameCondition } from './entities/checkGameCondition.ts';
+import { moveFunctions, type moveResultType } from './entities/moveFunctions.ts';
 import { Game2048 } from './pages/Layout';
 
 const storageBestScoreKey = 'bestScore';
@@ -32,6 +32,7 @@ function App() {
     setDoPlayerChooseWinningCondition(false);
   };
 
+  // 최고 점수 체크
   useEffect(() => {
     if (score > bestScore) {
       setBestScore(score);
@@ -40,33 +41,34 @@ function App() {
   }, [score, bestScore]);
 
   const [grid, setGrid] = useState<number[][]>(
-    implAddNewCell.addNewCell(implAddNewCell.addNewCell(initialGrid))
+    addNewCell(addNewCell(initialGrid))
   );
 
+  // 사용자 키 조작 체크
   useEffect(() => {
     const handleKeyUp = (event: KeyboardEvent) => {
-      const { moveLeft, moveRight, moveUp, moveDown } = implMoveFunctions;
-      const { addNewCell } = implAddNewCell;
+      const { moveLeft, moveRight, moveUp, moveDown } = moveFunctions;
 
       if (!isGameOver && !isWinner) {
-        let movedGrid;
+        let moveResult: moveResultType | undefined;
         switch (event.key) {
           case 'ArrowUp':
-            movedGrid = moveUp(grid);
+            moveResult = moveUp(grid);
             break;
           case 'ArrowDown':
-            movedGrid = moveDown(grid);
+            moveResult = moveDown(grid);
             break;
           case 'ArrowLeft':
-            movedGrid = moveLeft(grid);
+            moveResult = moveLeft(grid);
             break;
           case 'ArrowRight':
-            movedGrid = moveRight(grid);
+            moveResult = moveRight(grid);
             break;
         }
 
-        if (movedGrid !== undefined) {
-          setGrid(addNewCell(movedGrid))
+        if (moveResult !== undefined && JSON.stringify(moveResult.resultGrid) !== JSON.stringify(grid)) {
+          setGrid(addNewCell(moveResult.resultGrid));
+          setScore((prevScore) => prevScore + moveResult.scoreIncrement);
         }
       }
     };
@@ -78,16 +80,15 @@ function App() {
   }, [grid, isGameOver, isWinner]);
 
 
+  // 게임 종료 조건 체크
   useEffect(() => {
-    const { checkWinningCondition, checkGameOver } = implCheckGameDone;
-
+    const { checkWinningCondition, checkGameOver } = checkGameCondition;
     if (checkGameOver(grid)) setIsGameOver(true);
     if (checkWinningCondition(grid, winningCondition)) setIsWinner(true);
-
   }, [grid, winningCondition]);
 
   const restartGame = () => {
-    setGrid(implAddNewCell.addNewCell(implAddNewCell.addNewCell(initialGrid)));
+    setGrid(addNewCell(addNewCell(initialGrid)));
     setScore(0);
     setIsGameOver(false);
     setIsWinner(false);
