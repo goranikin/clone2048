@@ -1,4 +1,4 @@
-import { describe, expect,it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import { moveFunctions } from './moveFunctions.ts';
 
@@ -10,7 +10,7 @@ describe('2048 Move Functions', () => {
         [2, 2, 0, 0],
         [0, 0, 0, 0],
         [0, 0, 0, 0],
-        [0, 0, 0, 0]
+        [0, 0, 0, 0],
       ];
 
       const { resultGrid, scoreIncrement } = moveFunctions.moveLeft(grid);
@@ -19,7 +19,7 @@ describe('2048 Move Functions', () => {
         [4, 0, 0, 0],
         [0, 0, 0, 0],
         [0, 0, 0, 0],
-        [0, 0, 0, 0]
+        [0, 0, 0, 0],
       ]);
       expect(scoreIncrement).toBe(4);
     });
@@ -29,7 +29,7 @@ describe('2048 Move Functions', () => {
         [2, 2, 4, 4],
         [0, 0, 0, 0],
         [0, 0, 0, 0],
-        [0, 0, 0, 0]
+        [0, 0, 0, 0],
       ];
 
       const { resultGrid, scoreIncrement } = moveFunctions.moveLeft(grid);
@@ -38,7 +38,7 @@ describe('2048 Move Functions', () => {
         [4, 8, 0, 0],
         [0, 0, 0, 0],
         [0, 0, 0, 0],
-        [0, 0, 0, 0]
+        [0, 0, 0, 0],
       ]);
       expect(scoreIncrement).toBe(12);
     });
@@ -51,7 +51,7 @@ describe('2048 Move Functions', () => {
         [2, 2, 0, 0],
         [0, 0, 0, 0],
         [0, 0, 0, 0],
-        [0, 0, 0, 0]
+        [0, 0, 0, 0],
       ];
 
       const { resultGrid, scoreIncrement } = moveFunctions.moveRight(grid);
@@ -60,7 +60,7 @@ describe('2048 Move Functions', () => {
         [0, 0, 0, 4],
         [0, 0, 0, 0],
         [0, 0, 0, 0],
-        [0, 0, 0, 0]
+        [0, 0, 0, 0],
       ]);
       expect(scoreIncrement).toBe(4);
     });
@@ -73,7 +73,7 @@ describe('2048 Move Functions', () => {
         [2, 0, 0, 0],
         [2, 0, 0, 0],
         [0, 0, 0, 0],
-        [0, 0, 0, 0]
+        [0, 0, 0, 0],
       ];
 
       const { resultGrid, scoreIncrement } = moveFunctions.moveUp(grid);
@@ -82,7 +82,7 @@ describe('2048 Move Functions', () => {
         [4, 0, 0, 0],
         [0, 0, 0, 0],
         [0, 0, 0, 0],
-        [0, 0, 0, 0]
+        [0, 0, 0, 0],
       ]);
       expect(scoreIncrement).toBe(4);
     });
@@ -95,7 +95,7 @@ describe('2048 Move Functions', () => {
         [2, 0, 0, 0],
         [2, 0, 0, 0],
         [0, 0, 0, 0],
-        [0, 0, 0, 0]
+        [0, 0, 0, 0],
       ];
 
       const { resultGrid, scoreIncrement } = moveFunctions.moveDown(grid);
@@ -104,7 +104,7 @@ describe('2048 Move Functions', () => {
         [0, 0, 0, 0],
         [0, 0, 0, 0],
         [0, 0, 0, 0],
-        [4, 0, 0, 0]
+        [4, 0, 0, 0],
       ]);
       expect(scoreIncrement).toBe(4);
     });
@@ -117,7 +117,7 @@ describe('2048 Move Functions', () => {
         [2, 4, 8, 16],
         [0, 0, 0, 0],
         [0, 0, 0, 0],
-        [0, 0, 0, 0]
+        [0, 0, 0, 0],
       ];
 
       const { resultGrid, scoreIncrement } = moveFunctions.moveLeft(grid);
@@ -126,7 +126,7 @@ describe('2048 Move Functions', () => {
         [2, 4, 8, 16],
         [0, 0, 0, 0],
         [0, 0, 0, 0],
-        [0, 0, 0, 0]
+        [0, 0, 0, 0],
       ]);
       expect(scoreIncrement).toBe(0);
     });
@@ -136,7 +136,7 @@ describe('2048 Move Functions', () => {
         [0, 0, 0, 2],
         [0, 0, 0, 2],
         [0, 0, 0, 0],
-        [0, 0, 0, 0]
+        [0, 0, 0, 0],
       ];
 
       const { resultGrid, scoreIncrement } = moveFunctions.moveLeft(grid);
@@ -145,7 +145,7 @@ describe('2048 Move Functions', () => {
         [2, 0, 0, 0],
         [2, 0, 0, 0],
         [0, 0, 0, 0],
-        [0, 0, 0, 0]
+        [0, 0, 0, 0],
       ]);
       expect(scoreIncrement).toBe(0);
     });

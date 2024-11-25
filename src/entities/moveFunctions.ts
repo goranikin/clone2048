@@ -35,7 +35,9 @@ const moveGridLeftLogic = (grid: gridType): moveResultType => {
 };
 
 const transpose = (grid: gridType): gridType => {
-  return grid.map((_, colIndex) => grid.map((row) => row[colIndex]),) as gridType
+  return grid.map((_, colIndex) =>
+    grid.map((row) => row[colIndex]),
+  ) as gridType;
 };
 
 export const moveFunctions = {
