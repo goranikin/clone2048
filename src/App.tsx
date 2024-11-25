@@ -47,6 +47,8 @@ function App() {
   // 사용자 키 조작 체크
   useEffect(() => {
     const handleKeyUp = (event: KeyboardEvent) => {
+      if (doPlayerChooseWinningCondition) return;
+
       const { moveLeft, moveRight, moveUp, moveDown } = moveFunctions;
 
       if (!isGameOver && !isWinner) {
@@ -77,7 +79,7 @@ function App() {
     return () => {
       window.removeEventListener('keyup', handleKeyUp);
     };
-  }, [grid, isGameOver, isWinner]);
+  }, [doPlayerChooseWinningCondition, grid, isGameOver, isWinner]);
 
 
   // 게임 종료 조건 체크
